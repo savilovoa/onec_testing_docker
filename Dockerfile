@@ -66,6 +66,9 @@ RUN set -xe && \
         xfce4 \
         xfce4-terminal \
         xfce4-goodies \
+        # VNC Server
+        tigervnc-standalone-server \
+        tigervnc-common \
     && \
 # --- НАСТРОЙКА ЛОКАЛИ ---
     # (Выполняется здесь же, т.к. locales уже установлены)
@@ -102,13 +105,30 @@ RUN set -xe && \
     groupadd -r grp1cv8 --gid=$onec_gid && \
     useradd -r -g grp1cv8 --uid=$onec_uid --home-dir=/home/usr1cv8 --shell=/bin/bash usr1cv8 && \
     mkdir -p /home/usr1cv8/.1cv8 && \
+    mkdir -p /home/usr1cv8/.vnc && \
     chown -R usr1cv8:grp1cv8 /home/usr1cv8
 
-VOLUME /home/usr1cv8/.1cv8
-
+# --- НАСТРОЙКА VNC ---
 USER usr1cv8
 WORKDIR /home/usr1cv8
 
-# Путь исправлен с /opt/1C/v8.3/... на /opt/1cv8/...
-CMD ["/opt/1cv8/x86_64/1cv8c"]
+# Установка пароля VNC (по умолчанию: 1c_vnc_pass)
+RUN mkdir -p ~/.vnc && \
+    echo "1c_vnc_pass" | vncpasswd -f > ~/.vnc/passwd && \
+    chmod 600 ~/.vnc/passwd
+
+# Создаем xstartup для запуска XFCE
+RUN echo '#!/bin/sh' > ~/.vnc/xstartup && \
+    echo 'unset SESSION_MANAGER' >> ~/.vnc/xstartup && \
+    echo 'unset DBUS_SESSION_BUS_ADDRESS' >> ~/.vnc/xstartup && \
+    echo 'exec startxfce4' >> ~/.vnc/xstartup && \
+    chmod +x ~/.vnc/xstartup
+
+VOLUME /home/usr1cv8/.1cv8
+
+# Порт VNC
+EXPOSE 5901
+
+# Запускаем VNC сервер
+CMD ["vncserver", ":1", "-geometry", "1920x1080", "-depth", "24", "-localhost", "no", "-fg"]
 
