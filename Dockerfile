@@ -109,6 +109,8 @@ RUN set -xe && \
     useradd -r -g grp1cv8 --uid=$onec_uid --home-dir=/home/usr1cv8 --shell=/bin/bash usr1cv8 && \
     mkdir -p /home/usr1cv8/.1cv8 && \
     mkdir -p /home/usr1cv8/.vnc && \
+    echo "1c_vnc_pass" | /usr/bin/vncpasswd -f > /home/usr1cv8/.vnc/passwd && \
+    chmod 600 /home/usr1cv8/.vnc/passwd && \
     chown -R usr1cv8:grp1cv8 /home/usr1cv8
 
 # --- НАСТРОЙКА VNC ---
@@ -116,9 +118,6 @@ USER usr1cv8
 WORKDIR /home/usr1cv8
 
 # Установка пароля VNC (по умолчанию: 1c_vnc_pass)
-RUN mkdir -p ~/.vnc && \
-    echo "1c_vnc_pass" | /usr/bin/vncpasswd -f > ~/.vnc/passwd && \
-    chmod 600 ~/.vnc/passwd
 
 # Создаем xstartup для запуска XFCE
 RUN echo '#!/bin/sh' > ~/.vnc/xstartup && \
