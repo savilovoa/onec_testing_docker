@@ -117,7 +117,7 @@ WORKDIR /home/usr1cv8
 
 # Установка пароля VNC (по умолчанию: 1c_vnc_pass)
 RUN mkdir -p ~/.vnc && \
-    echo "1c_vnc_pass" | vncpasswd -f > ~/.vnc/passwd && \
+    echo "1c_vnc_pass" | /usr/bin/vncpasswd -f > ~/.vnc/passwd && \
     chmod 600 ~/.vnc/passwd
 
 # Создаем xstartup для запуска XFCE
