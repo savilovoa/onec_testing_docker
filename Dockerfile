@@ -89,6 +89,7 @@ RUN set -xe && \
 # Добавлена команда COPY для deb-пакетов 1C
 # (Предполагается, что они лежат рядом с Dockerfile)
 COPY 1c-enterprise*.deb /tmp/
+COPY entrypoint.sh /usr/local/bin/
 
 # Устанавливаем 1С и сразу создаем конфиг в одном слое
 RUN set -xe && \
@@ -97,6 +98,8 @@ RUN set -xe && \
     mkdir -p /opt/1cv8/conf && \
     echo "SystemLanguage=RU" >> /opt/1cv8/conf/conf.cfg && \
     echo "DisableUnsafeActionProtection=*" >> /opt/1cv8/conf/conf.cfg && \
+    # Делаем entrypoint исполняемым
+    chmod +x /usr/local/bin/entrypoint.sh && \
     # Очищаем /tmp
     rm -f /tmp/*.deb
 
@@ -129,6 +132,7 @@ VOLUME /home/usr1cv8/.1cv8
 # Порт VNC
 EXPOSE 5901
 
-# Запускаем VNC сервер
-CMD ["vncserver", ":1", "-geometry", "1920x1080", "-depth", "24", "-localhost", "no", "-fg"]
+# Запускаем через entrypoint (VNC + 1cv8c)
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD []
 
