@@ -66,9 +66,10 @@ RUN set -xe && \
         xfce4 \
         xfce4-terminal \
         xfce4-goodies \
-        # VNC Server
+        # VNC Server and tools
         tigervnc-standalone-server \
         tigervnc-common \
+        tigervnc-tools \
     && \
 # --- НАСТРОЙКА ЛОКАЛИ ---
     # (Выполняется здесь же, т.к. locales уже установлены)
