@@ -1,0 +1,1 @@
+docker run -d --name onec-8.3.27.2074 -p 5900:5900 --restart unless-stopped savilovoa/onec-client-vnc:8.3.27.2074
