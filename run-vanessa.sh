@@ -114,13 +114,16 @@ VA_C="$VA_C;КаталогВыгрузкиJUnit=${OUT}"
 VA_C="$VA_C;VAParams=${RUN_PARAMS}"
 
 echo "=== Запуск TESTMANAGER ==="
+ONEC_OUT="$OUT/logs/1c_out.log"
+ONEC_CONSOLE="$OUT/logs/1c_console.log"
 "$ONEC_BIN" ENTERPRISE \
-  /IBConnectionString"Srvr=${IB_SRV};Ref='${IB_REF}';" \
+  /IBConnectionString"Srvr=\"${IB_SRV}\";Ref=\"${IB_REF}\";" \
   /N"${IB_USER}" /P"${IB_PWD}" \
   /DisableStartupMessages /DisableStartupDialogs \
   /TESTMANAGER \
   /Execute "${VA_EPF}" \
-  /C"${VA_C}" &
+  /C"${VA_C}" \
+  /Out "$ONEC_OUT" >"$ONEC_CONSOLE" 2>&1 &
 ONEC_PID=$!
 
 echo "=== Ожидание завершения (до ${WAIT_TIMEOUT_MIN} мин) ==="
@@ -147,6 +150,8 @@ fi
 
 if [ ! -f "$BUILD_STATUS" ]; then
   echo "FAILED: файл статуса не создан ($BUILD_STATUS)" >&2
+  echo "--- 1c_out.log ---" >&2; cat "${ONEC_OUT:-}" 2>/dev/null >&2 || true
+  echo "--- 1c_console.log (tail) ---" >&2; tail -n 40 "${ONEC_CONSOLE:-}" 2>/dev/null >&2 || true
   exit 1
 fi
 
