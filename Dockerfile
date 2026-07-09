@@ -44,13 +44,13 @@ RUN groupadd -r grp1cv8 --gid=1098 \
   && chown -R usr1cv8:grp1cv8 /home/usr1cv8
 
 # 3. Копируем файлы .deb из папки dist и УСТАНАВЛИВАЕМ их
-COPY client-vnc/dist/*.deb /tmp/onec/
+COPY dist/*.deb /tmp/onec/
 RUN dpkg -i /tmp/onec/*.deb || apt-get update && apt-get install -y -f \
   && rm -rf /tmp/onec/ /var/lib/apt/lists/*
 
 # 4. Копируем и настраиваем скрипты запуска
-COPY client-vnc/entrypoint.sh /entrypoint.sh
-COPY client-vnc/run-vanessa.sh /run-vanessa.sh
+COPY ./entrypoint.sh /entrypoint.sh
+COPY ./run-vanessa.sh /run-vanessa.sh
 RUN chmod +x /entrypoint.sh /run-vanessa.sh && dos2unix /entrypoint.sh /run-vanessa.sh
 
 ENV DISPLAY=:0

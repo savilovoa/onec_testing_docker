@@ -1,0 +1,1 @@
+docker build --build-arg ONEC_VERSION=8.3.27.2074 -t savilovoa/onec-client-vnc:8.3.27.2074 -f Dockerfile .
